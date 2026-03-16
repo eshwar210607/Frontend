@@ -11,3 +11,8 @@ CREATE TABLE Roles (
     role_name VARCHAR(50) UNIQUE NOT NULL,
     description TEXT
 );
+
+CREATE TABLE Permissions (
+    permission_id INT PRIMARY KEY AUTO_INCREMENT,
+    permission_name VARCHAR(100) UNIQUE NOT NULL
+);
