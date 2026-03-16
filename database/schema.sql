@@ -25,3 +25,11 @@ CREATE TABLE UserRoles (
     FOREIGN KEY (user_id) REFERENCES Users(user_id),
     FOREIGN KEY (role_id) REFERENCES Roles(role_id)
 );
+
+CREATE TABLE RolePermissions (
+    role_id INT,
+    permission_id INT,
+    PRIMARY KEY(role_id, permission_id),
+    FOREIGN KEY (role_id) REFERENCES Roles(role_id),
+    FOREIGN KEY (permission_id) REFERENCES Permissions(permission_id)
+);
