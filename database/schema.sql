@@ -33,3 +33,14 @@ CREATE TABLE RolePermissions (
     FOREIGN KEY (role_id) REFERENCES Roles(role_id),
     FOREIGN KEY (permission_id) REFERENCES Permissions(permission_id)
 );
+
+CREATE TABLE AccessLogs (
+    log_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    permission_id INT,
+    access_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    access_status VARCHAR(20),
+    is_emergency BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (permission_id) REFERENCES Permissions(permission_id)
+);
