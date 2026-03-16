@@ -16,3 +16,12 @@ CREATE TABLE Permissions (
     permission_id INT PRIMARY KEY AUTO_INCREMENT,
     permission_name VARCHAR(100) UNIQUE NOT NULL
 );
+
+CREATE TABLE UserRoles (
+    user_id INT,
+    role_id INT,
+    assigned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY(user_id, role_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (role_id) REFERENCES Roles(role_id)
+);
