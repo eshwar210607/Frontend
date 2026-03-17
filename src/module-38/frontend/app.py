@@ -1,18 +1,24 @@
 import streamlit as st
 from pymongo import MongoClient
 
-# 🔷 UI CONFIG
+# 🔷 PAGE CONFIG
 st.set_page_config(page_title="RBAC System", layout="centered")
 
+# 🔷 UI STYLE
 st.markdown("""
 <style>
 .stApp { background: linear-gradient(to right, #eef2f3, #dfe9f3); }
-.stButton>button { width: 100%; border-radius: 10px; height: 3em; }
+.stButton>button {
+    width: 100%;
+    border-radius: 10px;
+    height: 3em;
+    font-weight: bold;
+}
 </style>
 """, unsafe_allow_html=True)
 
-# 🔷 DATABASE CONNECTION
-MONGO_URI = "mongodb+srv://eash210607_db_user:student123@cluster1.4aahrue.mongodb.net/rbac_db?retryWrites=true&w=majority"
+# 🔷 SECURE DATABASE CONNECTION (IMPORTANT 🔐)
+MONGO_URI = st.secrets["MONGO_URI"]   # <-- CHANGED HERE
 client = MongoClient(MONGO_URI)
 db = client["rbac_db"]
 
@@ -26,6 +32,8 @@ menu = st.radio("Choose", ["Login", "Signup"], horizontal=True)
 
 # ================= LOGIN =================
 if menu == "Login":
+    st.subheader("Login")
+
     email = st.text_input("Email")
     password = st.text_input("Password", type="password")
 
@@ -36,10 +44,10 @@ if menu == "Login":
             st.session_state["user"] = user
 
             # 🔷 GET ROLE NAMES
-            role_ids = user["roles"]
+            role_ids = user.get("roles", [])
             role_names = [
                 roles.find_one({"_id": r})["role_name"]
-                for r in role_ids
+                for r in role_ids if roles.find_one({"_id": r})
             ]
 
             # 🔷 ROLE BASED REDIRECT
@@ -52,20 +60,23 @@ if menu == "Login":
             st.error("Invalid Credentials ❌")
 
 # ================= SIGNUP =================
-# 🔷 SIGNUP
 else:
+    st.subheader("Create Account")
+
     name = st.text_input("Name")
     email = st.text_input("Email")
     password = st.text_input("Password", type="password")
 
-    # 🔷 Fetch roles dynamically
+    # 🔷 FETCH ROLES DYNAMICALLY
     role_list = list(roles.find())
     role_names = [r["role_name"] for r in role_list if r["role_name"] != "Admin"]
 
-    role_option = st.selectbox("Role", role_names)
+    role_option = st.selectbox("Select Role", role_names)
 
     if st.button("Signup"):
-        if users.find_one({"email": email}):
+        if not name or not email or not password:
+            st.warning("Please fill all fields")
+        elif users.find_one({"email": email}):
             st.warning("User already exists")
         else:
             role = roles.find_one({"role_name": role_option})
@@ -74,7 +85,7 @@ else:
                 "name": name,
                 "email": email,
                 "password": password,
-                "roles": [role["_id"]]
+                "roles": [role["_id"]] if role else []
             })
 
             st.success("Account Created ✅")
