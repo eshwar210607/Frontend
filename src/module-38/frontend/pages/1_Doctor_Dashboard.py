@@ -7,7 +7,8 @@ if "user" not in st.session_state:
     st.stop()
 
 # 🔌 DB
-client = MongoClient("mongodb+srv://eash210607_db_user:student123@cluster1.4aahrue.mongodb.net/rbac_db?retryWrites=true&w=majority")
+MONGO_URI = st.secrets["MONGO_URI"]
+client = MongoClient(MONGO_URI)
 db = client["rbac_db"]
 
 users = db["users"]
