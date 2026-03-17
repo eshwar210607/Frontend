@@ -1,7 +1,7 @@
 import streamlit as st
 from pymongo import MongoClient
 
-# UI STYLE
+# 🔷 UI CONFIG
 st.set_page_config(page_title="RBAC System", layout="centered")
 
 st.markdown("""
@@ -11,7 +11,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# DB
+# 🔷 DATABASE CONNECTION
 MONGO_URI = "mongodb+srv://eash210607_db_user:student123@cluster1.4aahrue.mongodb.net/rbac_db?retryWrites=true&w=majority"
 client = MongoClient(MONGO_URI)
 db = client["rbac_db"]
@@ -19,11 +19,12 @@ db = client["rbac_db"]
 users = db["users"]
 roles = db["roles"]
 
+# 🔷 TITLE
 st.title("🔐 RBAC System")
 
 menu = st.radio("Choose", ["Login", "Signup"], horizontal=True)
 
-# LOGIN
+# ================= LOGIN =================
 if menu == "Login":
     email = st.text_input("Email")
     password = st.text_input("Password", type="password")
@@ -34,24 +35,34 @@ if menu == "Login":
         if user:
             st.session_state["user"] = user
 
-            # ROLE BASED REDIRECT
+            # 🔷 GET ROLE NAMES
             role_ids = user["roles"]
-            role_names = [roles.find_one({"_id": r})["role_name"] for r in role_ids]
+            role_names = [
+                roles.find_one({"_id": r})["role_name"]
+                for r in role_ids
+            ]
 
+            # 🔷 ROLE BASED REDIRECT
             if "Admin" in role_names:
                 st.switch_page("pages/2_Admin_Dashboard.py")
             else:
-                st.switch_page("pages/1_User_Dashboard.py")
+                st.switch_page("pages/1_Doctor_Dashboard.py")
+
         else:
             st.error("Invalid Credentials ❌")
 
-# SIGNUP
+# ================= SIGNUP =================
+# 🔷 SIGNUP
 else:
     name = st.text_input("Name")
     email = st.text_input("Email")
     password = st.text_input("Password", type="password")
 
-    role_option = st.selectbox("Role", ["User", "Admin", "Patient"])
+    # 🔷 Fetch roles dynamically
+    role_list = list(roles.find())
+    role_names = [r["role_name"] for r in role_list if r["role_name"] != "Admin"]
+
+    role_option = st.selectbox("Role", role_names)
 
     if st.button("Signup"):
         if users.find_one({"email": email}):
