@@ -54,7 +54,7 @@ if menu == "Login":
             if "Admin" in role_names:
                 st.switch_page("pages/2_Admin_Dashboard.py")
             else:
-                st.switch_page("pages/1_Doctor_Dashboard.py")
+                st.switch_page("pages/1_User_Dashboard.py")
 
         else:
             st.error("Invalid Credentials ❌")

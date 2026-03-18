@@ -33,7 +33,7 @@ st.markdown("""
 col1, col2 = st.columns([8,2])
 
 with col1:
-    st.markdown("## 🏥 Doctor Dashboard")
+    st.markdown("## 🏥 User Dashboard")
 
 with col2:
     if st.button("🚪 Logout", key="logout_btn"):
@@ -78,7 +78,7 @@ col1, col2 = st.columns(2)
 
 with col1:
     if st.button("🏥 Dashboard"):
-        st.switch_page("pages/1_Doctor_Dashboard.py")
+        st.switch_page("pages/1_User_Dashboard.py")
 
 with col2:
     if st.button("📜 Logs"):
