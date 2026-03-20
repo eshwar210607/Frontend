@@ -70,7 +70,28 @@ if st.button("Update Permissions"):
     st.success("Permissions Updated ✅")
 
 # ================= VIEW USERS =================
+# ================= VIEW USERS =================
+import pandas as pd
+
 st.subheader("👥 All Users")
 
-user_data = list(users.find({}, {"_id": 0}))
-st.dataframe(user_data)
+user_data = list(users.find())
+
+# Clean MongoDB data
+for user in user_data:
+    # Convert _id
+    user["_id"] = str(user["_id"])
+    
+    # Convert roles ObjectId → role names (better UI)
+    role_names_list = []
+    for r in user.get("roles", []):
+        role = roles.find_one({"_id": r})
+        if role:
+            role_names_list.append(role["role_name"])
+    
+    user["roles"] = role_names_list
+
+# Convert to DataFrame
+df = pd.DataFrame(user_data)
+
+st.dataframe(df)
